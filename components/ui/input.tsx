@@ -58,6 +58,7 @@ export function InputCustom(props: InputSearchProps) {
         }}
       >
         <RNEInput
+          autoCapitalize="none"
           ref={inputRef}
           selectionColor={COLOR.PRIMARY}
           underlineColorAndroid="transparent"

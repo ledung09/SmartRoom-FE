@@ -64,6 +64,7 @@ export default function ImageTryoutModal({
 
   React.useEffect(() => {
     if (image) {
+      // @ts-ignore
       navigate("productTryout", { image: image });
     }
   }, [image]);

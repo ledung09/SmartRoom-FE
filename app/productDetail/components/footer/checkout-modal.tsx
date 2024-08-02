@@ -108,15 +108,7 @@ function ItemDetailSection() {
         >
           Chiếc ghế siêu dài và to Chiếc ghế siêu dài và to
         </Text>
-        <Text
-          numberOfLines={1}
-          style={{
-            color: COLOR.DARK_SLATE,
-            fontSize: 13,
-          }}
-        >
-          Blue, gay color
-        </Text>
+        
         <Text
           style={{
             fontWeight: "600",

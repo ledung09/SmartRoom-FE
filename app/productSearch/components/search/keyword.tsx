@@ -7,13 +7,14 @@ export default function PopularKeyword() {
     <View
       style={{
         paddingHorizontal: 18,
-        paddingVertical: 10,
+        paddingTop: 14,
+        paddingBottom: 12,
       }}
     >
       <Text
         style={{
           fontWeight: 600,
-          marginBottom: 12,
+          marginBottom: 14,
           fontSize: 14.5,
         }}
       >

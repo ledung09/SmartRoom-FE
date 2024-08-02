@@ -57,7 +57,7 @@ export default function ShopItem() {
           }}
           onPress={() => {
             // @ts-ignore
-            navigate("productDetail", { id: 1 });
+            navigate("productDetail", { id: "66abda2bdd0d17dc70f099ac" });
           }}
         >
           <View
@@ -92,44 +92,47 @@ export default function ShopItem() {
                 <Text
                   style={{
                     fontSize: 12.5,
+                    // textAlign: "justify",
                   }}
                 >
                   Cái ghế có chiều siêu dài
                 </Text>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "600",
-                    color: COLOR.PRIMARY,
-                    marginVertical: 6,
-                  }}
-                >
-                  100,000
-                  <Text
-                    style={{
-                      fontSize: 13,
-                    }}
-                  >
-                    ₫
-                  </Text>
-                </Text>
-
                 <View
                   style={{
                     display: "flex",
                     flexDirection: "row",
-                    alignItems: "center",
-                    gap: 5,
+                    justifyContent: "space-between",
+                    alignItems: "flex-end",
+                    marginTop: 6,
+                    marginBottom: 3,
                   }}
                 >
-                  <Star size={17} fill={COLOR.GOLD} />
                   <Text
                     style={{
-                      fontSize: 11,
-                      color: COLOR.IN_ACTIVE,
+                      fontWeight: "700",
+                      color: COLOR.PRIMARY,
                     }}
                   >
-                    4.9 (500)
+                    100,000
+                    <Text
+                      style={{
+                        fontSize: 13,
+                      }}
+                    >
+                      ₫
+                    </Text>
+                  </Text>
+
+                  <Text
+                    style={{
+                      fontSize: 10,
+                      fontWeight: "700",
+                      color: COLOR.IN_ACTIVE,
+                      marginBottom: 1,
+                      letterSpacing: -0.3,
+                    }}
+                  >
+                    500 solds
                   </Text>
                 </View>
               </View>

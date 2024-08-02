@@ -9,14 +9,17 @@ import { useCameraPermissions } from "expo-camera";
 import Dialogs from "@/components/ui/dialog";
 import Button from "@/components/ui/button";
 import ImageTryoutModal from "./tryout-modal";
+import { useProductDetail } from "../../hooks/useProductDetail";
 
 const windowWidth = Dimensions.get("window").width;
 const imageHeight = 320;
 const photoButtonWidth = 152;
 
 export default function ImageCarousel() {
+  const { data, error, isPending } = useProductDetail();
+
   const [open, setOpen] = React.useState(false); // modal control
-  const [isDialogOn, setIsDialogOn] = React.useState(true);
+  // const [isDialogOn, setIsDialogOn] = React.useState(true);
   const [permission, requestPermission] = useCameraPermissions();
 
   if (!permission) {
@@ -28,6 +31,9 @@ export default function ImageCarousel() {
     // Camera permissions are not granted yet.
     // setIsDialogOn(true);
   }
+
+  if (isPending) return <Text>There is loading</Text>;
+  if (error) return <Text>There is err</Text>;
 
   return (
     <>
@@ -61,9 +67,9 @@ export default function ImageCarousel() {
           console.log(event.nativeEvent.contentOffset.x)
         }
       >
-        <ImageCarouselItem setOpen={setOpen} />
-        <ImageCarouselItem setOpen={setOpen} />
-        <ImageCarouselItem setOpen={setOpen} />
+        {data?.image.map((item, index) => (
+          <ImageCarouselItem setOpen={setOpen} image={item} key={index} />
+        ))}
       </ScrollView>
       <ImageTryoutModal control={[open, setOpen]} />
     </>
@@ -71,8 +77,10 @@ export default function ImageCarousel() {
 }
 
 function ImageCarouselItem({
+  image,
   setOpen,
 }: {
+  image: string;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [backdrop, setBackdrop] = React.useState(false);
@@ -87,7 +95,7 @@ function ImageCarouselItem({
       onPress={() => setBackdrop(true)}
     >
       <Image
-        source="https://m.media-amazon.com/images/I/81mlWpZkDFL._AC_UF894,1000_QL80_.jpg"
+        source={image}
         placeholder={{ blurhash }}
         contentFit="cover"
         transition={500}

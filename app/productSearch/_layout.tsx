@@ -12,10 +12,27 @@ import SearchItem from "./components/search-item";
 import Separator from "@/components/ui/separator";
 import PopularKeyword from "./components/search/keyword";
 import RecentSearch from "./components/search/recent";
+import { debounce } from "@/util/debounce";
+import { searchProduct } from "@/apis/es";
+import LocalStorage from "@/util/local-storage";
 
 export default function ProductSearch() {
-  const [search, setSearch] = React.useState("");
+  const [query, setQuery] = React.useState("");
+  const [result, setResult] = React.useState<string[]>([]);
   const navigation = useNavigation();
+
+  const fetchResults = async (searchQuery: string) => {
+    const result = await searchProduct(searchQuery);
+    setResult(result);
+  };
+
+  const debouncedFetchResults = React.useCallback(debounce(fetchResults), []);
+
+  React.useEffect(() => {
+    if (query) {
+      debouncedFetchResults(query);
+    } else setResult([]);
+  }, [query]);
 
   return (
     <View style={{ flex: 1, backgroundColor: "red" }}>
@@ -66,10 +83,15 @@ export default function ProductSearch() {
               marginLeft: 2,
             }}
             placeholder="Find you needed..."
-            control={[search, setSearch]}
+            control={[query, setQuery]}
+            value={query}
             customBorder
-            onFocus={() => {
-              console.log(1);
+            onFocus={() => {}}
+            returnKeyType="previous"
+            onSubmitEditing={async () => {
+              if (query) {
+                await LocalStorage.addLocalStorage("recentSearch", query);
+              }
             }}
           />
         </View>
@@ -80,17 +102,18 @@ export default function ProductSearch() {
         }}
         keyboardShouldPersistTaps="handled"
       >
-        <SearchItem />
-        <Separator />
-        <SearchItem />
-        <Separator />
-        <SearchItem />
-        <Separator />
-        <SearchItem />
-        <Separator />
-
-        <PopularKeyword />
-        <RecentSearch />
+        {query ? (
+          <>
+            {result.map((item, index) => (
+              <SearchItem value={[item, query]} key={index} />
+            ))}
+          </>
+        ) : (
+          <>
+            <PopularKeyword />
+            <RecentSearch />
+          </>
+        )}
       </ScrollView>
     </View>
   );

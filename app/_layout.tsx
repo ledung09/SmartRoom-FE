@@ -18,6 +18,7 @@ import { ClickOutsideProvider } from "react-native-click-outside";
 import ProductSearch from "./productSearch/_layout";
 import ProductDetail from "./productDetail/_layout";
 import ProductTryout from "./productTryout/_layout";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -52,6 +53,8 @@ const theme = createTheme({
   },
 });
 
+const queryClient = new QueryClient();
+
 export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
@@ -70,66 +73,68 @@ export default function RootLayout() {
   return (
     <ClickOutsideProvider>
       <ThemeProvider theme={theme}>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <BottomSheetModalProvider>
-            <StatusBar
-              style="light"
-              backgroundColor={COLOR.PRIMARY}
-              animated={true}
-            />
-            <Stack.Navigator
-              screenOptions={{
-                navigationBarColor: "black",
-              }}
-            >
-              <Stack.Group>
-                <Stack.Screen
-                  name="(tabs)"
-                  options={{ headerShown: false }}
-                  component={TabLayout}
-                />
-                <Stack.Screen
-                  name="productSearch"
-                  options={{
-                    header: () => <CustomHeader />,
-                  }}
-                  component={ProductSearch}
-                />
-                <Stack.Screen
-                  name="productDetail"
-                  options={{
-                    header: () => <CustomHeader />,
-                  }}
-                  component={ProductDetail}
-                />
-                <Stack.Screen
-                  name="productTryout"
-                  options={{
-                    // headerShown: false,
-                    header: () => <CustomHeader />,
-                  }}
-                  component={ProductTryout}
-                />
-                <Stack.Screen
-                  name="addCheckIn"
-                  options={{
-                    header: () => <CustomHeader title="" goBack />,
-                  }}
-                  component={AddCheckIn}
-                />
-                <Stack.Screen
-                  name="paymentsHistory"
-                  options={{
-                    header: () => (
-                      <CustomHeader title="Lịch sử thanh toán" goBack />
-                    ),
-                  }}
-                  component={PaymentsHistory}
-                />
-              </Stack.Group>
-            </Stack.Navigator>
-          </BottomSheetModalProvider>
-        </GestureHandlerRootView>
+        <QueryClientProvider client={queryClient}>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <BottomSheetModalProvider>
+              <StatusBar
+                style="light"
+                backgroundColor={COLOR.PRIMARY}
+                animated={true}
+              />
+              <Stack.Navigator
+                screenOptions={{
+                  navigationBarColor: "black",
+                }}
+              >
+                <Stack.Group>
+                  <Stack.Screen
+                    name="(tabs)"
+                    options={{ headerShown: false }}
+                    component={TabLayout}
+                  />
+                  <Stack.Screen
+                    name="productSearch"
+                    options={{
+                      header: () => <CustomHeader />,
+                    }}
+                    component={ProductSearch}
+                  />
+                  <Stack.Screen
+                    name="productDetail"
+                    options={{
+                      header: () => <CustomHeader />,
+                    }}
+                    component={ProductDetail}
+                  />
+                  <Stack.Screen
+                    name="productTryout"
+                    options={{
+                      // headerShown: false,
+                      header: () => <CustomHeader />,
+                    }}
+                    component={ProductTryout}
+                  />
+                  <Stack.Screen
+                    name="addCheckIn"
+                    options={{
+                      header: () => <CustomHeader title="" goBack />,
+                    }}
+                    component={AddCheckIn}
+                  />
+                  <Stack.Screen
+                    name="paymentsHistory"
+                    options={{
+                      header: () => (
+                        <CustomHeader title="Lịch sử thanh toán" goBack />
+                      ),
+                    }}
+                    component={PaymentsHistory}
+                  />
+                </Stack.Group>
+              </Stack.Navigator>
+            </BottomSheetModalProvider>
+          </GestureHandlerRootView>
+        </QueryClientProvider>
       </ThemeProvider>
     </ClickOutsideProvider>
   );
