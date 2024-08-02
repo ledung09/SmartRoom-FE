@@ -22,8 +22,8 @@ export default function ImageCarousel() {
   // const [isDialogOn, setIsDialogOn] = React.useState(true);
   const [permission, requestPermission] = useCameraPermissions();
 
+  // Camera permissions are still loading.
   if (!permission) {
-    // Camera permissions are still loading.
     return <View />;
   }
 
