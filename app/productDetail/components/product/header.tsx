@@ -4,10 +4,24 @@ import { COLOR } from "@/constants/colors";
 import Button from "@/components/ui/button";
 import { Heart } from "lucide-react-native";
 import { useProductDetail } from "../../hooks/useProductDetail";
+import { debounce } from "@/util/debounce";
+import { setProductHeartedDetail } from "@/apis/product";
 
 export default function HeaderProductDetail() {
-  const { data, error, isPending } = useProductDetail();
-  const [heart, setHeart] = React.useState(false);
+  const { data, error, isPending, id } = useProductDetail();
+  const [hearted, setHearted] = React.useState<boolean | undefined>(undefined);
+
+  // Create a debounced function that accepts the current hearted value
+  const debounceHeartedAction = React.useCallback(
+    debounce((heartedValue) => setProductHeartedDetail(id, heartedValue)),
+    [id]
+  );
+
+  React.useEffect(() => {
+    if (data?.hearted !== undefined) {
+      setHearted(data.hearted);
+    }
+  }, [data]);
 
   if (isPending) return <Text>There is loading</Text>;
   if (error) return <Text>There is err</Text>;
@@ -96,7 +110,9 @@ export default function HeaderProductDetail() {
             borderRadius: 9999,
           }}
           onPress={() => {
-            setHeart(!heart);
+            const newHearted = !hearted;
+            setHearted(newHearted);
+            debounceHeartedAction(newHearted);
           }}
           buttonStyle={{
             width: 36,
@@ -104,8 +120,8 @@ export default function HeaderProductDetail() {
           }}
           icon={
             <Heart
-              fill={heart ? COLOR.PRIMARY : "white"}
-              color={!heart ? COLOR.IN_ACTIVE : COLOR.PRIMARY}
+              fill={hearted ? COLOR.PRIMARY : "white"}
+              color={!hearted ? COLOR.IN_ACTIVE : COLOR.PRIMARY}
               size={21}
               strokeWidth={2.3}
             />

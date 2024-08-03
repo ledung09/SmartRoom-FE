@@ -6,10 +6,12 @@ import { blurhash } from "@/constants/image";
 import { Shadow } from "react-native-shadow-2";
 import Button from "../ui/button";
 import { useNavigation } from "@react-navigation/native";
-import { Star } from "lucide-react-native";
+import { Heart } from "lucide-react-native";
 
 export default function ShopItem() {
   const { navigate } = useNavigation();
+  const [heart, setHeart] = React.useState(false);
+
   return (
     <Pressable
       style={{
@@ -54,6 +56,7 @@ export default function ShopItem() {
           }}
           containerStyle={{
             borderRadius: 8,
+            position: "relative",
           }}
           onPress={() => {
             // @ts-ignore
@@ -101,10 +104,11 @@ export default function ShopItem() {
                   style={{
                     display: "flex",
                     flexDirection: "row",
-                    justifyContent: "space-between",
+                    // justifyContent: "space-between",
                     alignItems: "flex-end",
                     marginTop: 6,
                     marginBottom: 3,
+                    gap: 4,
                   }}
                 >
                   <Text
@@ -128,16 +132,50 @@ export default function ShopItem() {
                       fontSize: 10,
                       fontWeight: "700",
                       color: COLOR.IN_ACTIVE,
-                      marginBottom: 1,
-                      letterSpacing: -0.3,
+                      marginBottom: 2,
+                      letterSpacing: -0.2,
                     }}
                   >
-                    500 solds
+                    | 500 solds
                   </Text>
                 </View>
               </View>
             </View>
-            {/* </Shadow> */}
+          </View>
+          <View
+            style={{
+              position: "absolute",
+              top: 4,
+              right: 4,
+              backgroundColor: "white",
+              // borderBottomLeftRadius: 12,
+              borderRadius: 9999,
+            }}
+          >
+            <Button
+              type="clear"
+              titleStyle={{
+                color: "black",
+              }}
+              containerStyle={{
+                borderRadius: 9999,
+              }}
+              onPress={() => {
+                setHeart(!heart);
+              }}
+              buttonStyle={{
+                width: 27,
+                height: 27,
+              }}
+              icon={
+                <Heart
+                  fill={heart ? "white" : COLOR.PRIMARY}
+                  color={COLOR.PRIMARY}
+                  size={18}
+                  strokeWidth={2.5}
+                />
+              }
+            />
           </View>
         </Button>
       </Shadow>

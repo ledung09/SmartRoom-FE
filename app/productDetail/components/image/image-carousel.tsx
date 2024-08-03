@@ -20,17 +20,6 @@ export default function ImageCarousel() {
 
   const [open, setOpen] = React.useState(false); // modal control
   // const [isDialogOn, setIsDialogOn] = React.useState(true);
-  const [permission, requestPermission] = useCameraPermissions();
-
-  // Camera permissions are still loading.
-  if (!permission) {
-    return <View />;
-  }
-
-  if (!permission.granted) {
-    // Camera permissions are not granted yet.
-    // setIsDialogOn(true);
-  }
 
   if (isPending) return <Text>There is loading</Text>;
   if (error) return <Text>There is err</Text>;
@@ -84,8 +73,6 @@ function ImageCarouselItem({
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [backdrop, setBackdrop] = React.useState(false);
-  const { navigate } = useNavigation();
-  const [permission, requestPermission] = useCameraPermissions();
 
   return (
     <Pressable

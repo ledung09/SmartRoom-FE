@@ -7,10 +7,12 @@ const productDetailContext = React.createContext<{
   data: ProductDetail | undefined;
   error: Error | null;
   isPending: boolean;
+  id: string;
 }>({
   data: undefined,
   error: null,
   isPending: false,
+  id: "",
 });
 
 export function useProductDetail() {
@@ -34,7 +36,7 @@ export function ProductDetailProvider({
     enabled: !!id,
   });
 
-  const value = { data, error, isPending };
+  const value = { data, error, isPending, id };
 
   return (
     <productDetailContext.Provider value={value}>

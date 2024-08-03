@@ -68,9 +68,7 @@ export default function ProductDetail({ route }) {
           </Button>
         </View>
         <HeaderProductDetail />
-        <Separator />
         <ProductSupplier />
-        <Separator />
         <ProductDescription />
       </ScrollView>
       <ProductDetailFooter />

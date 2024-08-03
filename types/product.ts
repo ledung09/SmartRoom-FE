@@ -11,4 +11,5 @@ export interface ProductDetail {
   supplier_image: string;
   supplier_product_count: number;
   supplier_rating: number;
+  hearted: boolean;
 }

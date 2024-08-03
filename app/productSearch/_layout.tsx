@@ -45,7 +45,7 @@ export default function ProductSearch() {
           paddingLeft: 10,
           paddingRight: 16,
           backgroundColor: COLOR.PRIMARY,
-          gap: 8,
+          gap: 6,
         }}
       >
         <Button

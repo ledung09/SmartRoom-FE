@@ -5,6 +5,7 @@ import { COLOR } from "@/constants/colors";
 import Button from "@/components/ui/button";
 import { blurhash } from "@/constants/image";
 import { useProductDetail } from "../../hooks/useProductDetail";
+import Separator from "@/components/ui/separator";
 
 export default function ProductSupplier() {
   const { data, error, isPending } = useProductDetail();
@@ -14,6 +15,7 @@ export default function ProductSupplier() {
 
   return (
     <>
+      <Separator />
       <View
         style={{
           marginTop: 10,
@@ -148,6 +150,7 @@ export default function ProductSupplier() {
           <Text> rating</Text>
         </Text>
       </View>
+      <Separator />
     </>
   );
 }
