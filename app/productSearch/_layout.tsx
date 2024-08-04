@@ -13,7 +13,7 @@ import Separator from "@/components/ui/separator";
 import PopularKeyword from "./components/search/keyword";
 import RecentSearch from "./components/search/recent";
 import { debounce } from "@/util/debounce";
-import { searchProduct } from "@/apis/es";
+import { searchProductAutocomplete } from "@/apis/es";
 import LocalStorage from "@/util/local-storage";
 import { useQuery } from "@tanstack/react-query";
 
@@ -24,7 +24,7 @@ export default function ProductSearch() {
 
   const { data } = useQuery({
     queryKey: ["autocomplete", debounceQuery],
-    queryFn: () => searchProduct(debounceQuery),
+    queryFn: () => searchProductAutocomplete(debounceQuery),
   });
 
   const debouncedFetchResults = React.useCallback(

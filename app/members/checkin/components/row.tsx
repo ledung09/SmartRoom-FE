@@ -50,9 +50,7 @@ export default function CheckInRow() {
         </Text>
       </View>
       <Button
-        onPress={() => {
-          console.log(1);
-        }}
+        onPress={() => {}}
         titleStyle={{
           color: "red",
         }}

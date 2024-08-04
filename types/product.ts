@@ -13,3 +13,20 @@ export interface ProductDetail {
   supplier_rating: number;
   hearted: boolean;
 }
+
+export interface ProductShortDetail {
+  _id: string;
+  image: string[];
+  name: string;
+  price: number;
+  sold: number;
+}
+
+export interface ProductSearchFilter {
+  offset: number;
+  limit?: number;
+  query?: string;
+  categoryId?: number;
+  priceSort?: number;
+  soldSort?: number;
+}

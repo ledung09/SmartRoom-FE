@@ -7,8 +7,9 @@ import { Shadow } from "react-native-shadow-2";
 import Button from "../ui/button";
 import { useNavigation } from "@react-navigation/native";
 import { Heart } from "lucide-react-native";
+import { ProductShortDetail } from "@/types/product";
 
-export default function ShopItem() {
+export default function ShopItem({ detail }: { detail: ProductShortDetail }) {
   const { navigate } = useNavigation();
   const [heart, setHeart] = React.useState(false);
 
@@ -18,6 +19,7 @@ export default function ShopItem() {
         flex: 1,
         borderRadius: 8,
         backgroundColor: "white",
+        marginHorizontal: 4,
       }}
     >
       <Shadow
@@ -60,7 +62,7 @@ export default function ShopItem() {
           }}
           onPress={() => {
             // @ts-ignore
-            navigate("productDetail", { id: "66abda2bdd0d17dc70f099ac" });
+            navigate("productDetail", { id: detail._id });
           }}
         >
           <View
@@ -75,7 +77,7 @@ export default function ShopItem() {
               }}
             >
               <Image
-                source="https://m.media-amazon.com/images/I/81mlWpZkDFL._AC_UF894,1000_QL80_.jpg"
+                source={detail.image}
                 placeholder={{ blurhash }}
                 contentFit="cover"
                 transition={500}
@@ -93,12 +95,14 @@ export default function ShopItem() {
                 }}
               >
                 <Text
+                  numberOfLines={2}
                   style={{
                     fontSize: 12.5,
+
                     // textAlign: "justify",
                   }}
                 >
-                  Cái ghế có chiều siêu dài
+                  {detail.name}
                 </Text>
                 <View
                   style={{
@@ -117,7 +121,7 @@ export default function ShopItem() {
                       color: COLOR.PRIMARY,
                     }}
                   >
-                    100,000
+                    {detail.price}
                     <Text
                       style={{
                         fontSize: 13,
@@ -136,7 +140,7 @@ export default function ShopItem() {
                       letterSpacing: -0.2,
                     }}
                   >
-                    | 500 solds
+                    | {detail.price} sold{detail.sold > 1 || "s"}
                   </Text>
                 </View>
               </View>

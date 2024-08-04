@@ -26,8 +26,8 @@ export default function SpecialSection() {
           gap: 12,
         }}
       >
-        <ShopItem />
-        <ShopItem />
+        {/* <ShopItem /> */}
+        {/* <ShopItem /> */}
       </View>
     </View>
   );

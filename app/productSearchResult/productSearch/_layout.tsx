@@ -6,6 +6,7 @@ import {
   ScrollView,
   View,
   Pressable,
+  FlatList,
 } from "react-native";
 import { Image } from "expo-image";
 import { blurhash } from "@/constants/image";
@@ -20,35 +21,58 @@ import Separator from "@/components/ui/separator";
 import PopularKeyword from "./components/search/keyword";
 import RecentSearch from "./components/search/recent";
 import { debounce } from "@/util/debounce";
-import { searchProduct } from "@/apis/es";
+import { searchProduct, searchProductAutocomplete } from "@/apis/es";
 import LocalStorage from "@/util/local-storage";
 import ShopItem from "@/components/common/item";
 import CategoryCarousel from "./components/carousel";
 import ProductSearchFilterModal from "./components/modal";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { ProductSearchFilter, ProductShortDetail } from "@/types/product";
 
 export default function ProductSearchResult() {
-  const [query, setQuery] = React.useState("Hellu");
-  const [result, setResult] = React.useState<string[]>([]);
-  const [open, setOpen] = React.useState(false);
-
+  const queryClient = useQueryClient();
   const navigation = useNavigation();
+  const [open, setOpen] = React.useState(false);
+  const [query, setQuery] = React.useState("Hellu");
+  const [filter, setFilter] = React.useState<ProductSearchFilter>({
+    offset: 0,
+  });
 
-  const fetchResults = async (searchQuery: string) => {
-    const result = await searchProduct(searchQuery);
-    setResult(result);
+  const { isLoading, data, fetchNextPage, hasNextPage } = useInfiniteQuery({
+    queryKey: ["productSearchList"],
+    queryFn: (defaultProps) => searchProduct(filter, defaultProps),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPage) => {
+      if (lastPage.length === 0) return undefined;
+      return allPage.length + 1;
+    },
+  });
+
+  const dataArr = data?.pages.map((page) => page).flat();
+
+  // const temp = data?.pages.map((page) => page).flat();
+
+  // const dataArr = temp ? temp.concat(temp).concat(temp) : undefined;
+
+  const onEndReach = () => {
+    if (hasNextPage && !isLoading) {
+      fetchNextPage();
+    }
   };
-
-  const debouncedFetchResults = React.useCallback(debounce(fetchResults), []);
-
-  React.useEffect(() => {
-    if (query) {
-      debouncedFetchResults(query);
-    } else setResult([]);
-  }, [query]);
 
   return (
     <>
-      <ScrollView style={{ flex: 1, backgroundColor: "white" }}>
+      <Button
+        title={"reset me"}
+        onPress={async () => {
+          await queryClient.resetQueries({
+            queryKey: ["productSearchList"],
+            exact: true,
+          });
+        }}
+      ></Button>
+      {/* <Text>{JSON.stringify(dataArr)}</Text> */}
+      <View style={{ flex: 1, backgroundColor: "blue" }}>
         <View
           style={{
             display: "flex",
@@ -159,13 +183,20 @@ export default function ProductSearchResult() {
         </View>
 
         <CategoryCarousel />
-        <ScrollView
+        <FlatList
+          onEndReached={onEndReach}
+          onEndReachedThreshold={0.5}
+          keyExtractor={(item) => item._id}
+          renderItem={({ item }) => <ShopItem detail={item} />}
+          data={dataArr}
           style={{
-            backgroundColor: "white",
+            backgroundColor: "yellow",
+            flex: 1,
           }}
-          keyboardShouldPersistTaps="handled"
+          numColumns={2}
+          columnWrapperStyle={{ marginHorizontal: 10, paddingVertical: 5 }}
         >
-          <View
+          {/* <View
             style={{
               paddingHorizontal: 16,
               marginVertical: 10,
@@ -181,9 +212,9 @@ export default function ProductSearchResult() {
               <ShopItem />
               <ShopItem />
             </View>
-          </View>
-        </ScrollView>
-      </ScrollView>
+          </View> */}
+        </FlatList>
+      </View>
       <ProductSearchFilterModal control={[open, setOpen]} />
     </>
   );
