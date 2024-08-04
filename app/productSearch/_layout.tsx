@@ -15,23 +15,27 @@ import RecentSearch from "./components/search/recent";
 import { debounce } from "@/util/debounce";
 import { searchProduct } from "@/apis/es";
 import LocalStorage from "@/util/local-storage";
+import { useQuery } from "@tanstack/react-query";
 
 export default function ProductSearch() {
   const [query, setQuery] = React.useState("");
-  const [result, setResult] = React.useState<string[]>([]);
+  const [debounceQuery, setDebounceQuery] = React.useState("");
   const navigation = useNavigation();
 
-  const fetchResults = async (searchQuery: string) => {
-    const result = await searchProduct(searchQuery);
-    setResult(result);
-  };
+  const { data } = useQuery({
+    queryKey: ["autocomplete", debounceQuery],
+    queryFn: () => searchProduct(debounceQuery),
+  });
 
-  const debouncedFetchResults = React.useCallback(debounce(fetchResults), []);
+  const debouncedFetchResults = React.useCallback(
+    debounce((searchQuery) => setDebounceQuery(searchQuery), 400),
+    []
+  );
 
   React.useEffect(() => {
     if (query) {
       debouncedFetchResults(query);
-    } else setResult([]);
+    }
   }, [query]);
 
   return (
@@ -104,9 +108,10 @@ export default function ProductSearch() {
       >
         {query ? (
           <>
-            {result.map((item, index) => (
-              <SearchItem value={[item, query]} key={index} />
-            ))}
+            {data &&
+              data.map((item, index) => (
+                <SearchItem value={[item, query]} key={index} />
+              ))}
           </>
         ) : (
           <>

@@ -47,6 +47,7 @@ export default function SearchItem({ value }: { value: [string, string] }) {
           style={{
             fontSize: 13,
             flex: 1,
+            marginRight: 8,
           }}
           numberOfLines={1}
         >
