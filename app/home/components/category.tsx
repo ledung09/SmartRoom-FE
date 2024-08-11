@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getCategory } from "@/apis/category";
 import { blurhash } from "@/constants/image";
 import { Skeleton } from "@rneui/themed";
+import LoadingCategory from "./loading";
 
 export default function Category() {
   const { isPending, error, data } = useQuery({
@@ -15,42 +16,42 @@ export default function Category() {
     queryFn: getCategory,
   });
 
-  if (isPending)
-    return (
-      <View
-        style={{
-          marginVertical: 20,
-        }}
-      >
-        <ActivityIndicator
-          size="large"
-          color={COLOR.PRIMARY}
-          style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] }}
-        />
-      </View>
-    );
-
   if (error) return <Text>Some error occured</Text>;
 
-  return (
-    <ScrollView
-      horizontal
-      // pagingEnabled
-      showsHorizontalScrollIndicator={false}
+  return isPending ? (
+    <View
       style={{
-        paddingVertical: 8,
-        paddingRight: 4,
-        paddingLeft: 4,
+        marginVertical: 8,
+        paddingHorizontal: 4,
+        flexDirection: "row",
+        width: "100%",
+        gap: 12,
       }}
     >
-      {data.map((item, index) => (
-        <CategoryItem
-          label={item.category_name}
-          imageUrl={item.picture}
-          key={index}
-        />
-      ))}
-    </ScrollView>
+      <LoadingCategory />
+      <LoadingCategory />
+      <LoadingCategory />
+      <LoadingCategory />
+    </View>
+  ) : (
+    <View>
+      <ScrollView
+        horizontal
+        // pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        style={{
+          paddingVertical: 8,
+        }}
+      >
+        {data.map((item, index) => (
+          <CategoryItem
+            label={item.category_name}
+            imageUrl={item.picture}
+            key={index}
+          />
+        ))}
+      </ScrollView>
+    </View>
   );
 }
 
@@ -72,7 +73,7 @@ function CategoryItem({
         marginHorizontal: 3,
         display: "flex",
         flexDirection: "column",
-        gap: 4,
+        gap: 6,
         borderRadius: 10,
         width: 80,
       }}

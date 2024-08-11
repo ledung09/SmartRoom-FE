@@ -17,6 +17,7 @@ import Button from "@/components/ui/button";
 import { COLOR } from "@/constants/colors";
 import { useQuery } from "@tanstack/react-query";
 import { getCategory } from "@/apis/category";
+import CategoryLoadingSmall from "./loading";
 
 export default function CategoryCarousel() {
   const { isPending, error, data } = useQuery({
@@ -24,41 +25,44 @@ export default function CategoryCarousel() {
     queryFn: getCategory,
   });
 
-  if (isPending)
-    return (
-      <View
-        style={{
-          marginVertical: 20,
-        }}
-      >
-        <ActivityIndicator
-          size="large"
-          color={COLOR.PRIMARY}
-          style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] }}
-        />
-      </View>
-    );
-
   if (error) return <Text>Some error occured</Text>;
 
-  return (
+  return isPending ? (
+    <View
+      style={{
+        paddingVertical: 12,
+        backgroundColor: "white",
+        flexDirection: "row",
+        gap: 12,
+        paddingHorizontal: 10,
+      }}
+    >
+      <CategoryLoadingSmall />
+      <CategoryLoadingSmall />
+      <CategoryLoadingSmall />
+      <CategoryLoadingSmall />
+    </View>
+  ) : (
     <View>
       <ScrollView
         style={{
-          backgroundColor: "red",
-          paddingVertical: 10,
-          paddingHorizontal: 8,
+          backgroundColor: "white",
+          paddingVertical: 11,
         }}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={(event) =>
-          console.log(event.nativeEvent.contentOffset.x)
-        }
+        // onMomentumScrollEnd={(event) =>
+        //   console.log(event.nativeEvent.contentOffset.x)
+        // }
       >
-        {data.map((item) => (
+        {data.map((item, index, array) => (
           <CategoryCarouselItem
             key={item.category_id}
             label={item.category_name}
+            index={{
+              index,
+              len: array.length,
+            }}
           />
         ))}
       </ScrollView>
@@ -66,21 +70,36 @@ export default function CategoryCarousel() {
   );
 }
 
-function CategoryCarouselItem({ label }: { label: string }) {
+function CategoryCarouselItem({
+  label,
+  index,
+}: {
+  label: string;
+  index: {
+    index: number;
+    len: number;
+  };
+}) {
   const [selected, setSelected] = React.useState(false);
   const { navigate } = useNavigation();
 
   return (
     <Pressable
-      style={{
-        marginHorizontal: 4,
-        borderRadius: 6,
-        paddingVertical: 5,
-        paddingHorizontal: 12,
-        borderWidth: 1.25,
-        borderColor: selected ? COLOR.PRIMARY : COLOR.IN_ACTIVE,
-        backgroundColor: selected ? COLOR.NEW_LIGHT_BLUE : "white",
-      }}
+      style={[
+        {
+          marginHorizontal: 4,
+          borderRadius: 6,
+          paddingVertical: 5,
+          paddingHorizontal: 12,
+          borderWidth: 1.25,
+          borderColor: selected ? COLOR.PRIMARY : COLOR.IN_ACTIVE,
+          backgroundColor: selected ? COLOR.NEW_LIGHT_BLUE : "white",
+        },
+        {
+          marginLeft: index.index === 0 ? 8 : 4,
+          marginRight: index.index === index.len - 1 ? 8 : 4,
+        },
+      ]}
       onPress={() => setSelected(!selected)}
     >
       <Text

@@ -6,9 +6,13 @@ import { Pressable, Text } from "react-native";
 import { View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
+import LocalStorage from "@/util/local-storage";
+import { useNavigation } from "@react-navigation/native";
+import { navigateSearchResult } from "@/util/navigate";
 
 export default function RecentSearch() {
   const [recentSearch, setRecentSearch] = React.useState([]);
+  const [rerender, setRerender] = React.useState(false);
 
   React.useEffect(() => {
     const getStorage = async () => {
@@ -16,7 +20,7 @@ export default function RecentSearch() {
       setRecentSearch(!key ? [] : JSON.parse(key)["query"]);
     };
     getStorage();
-  }, []);
+  }, [rerender]);
 
   if (recentSearch.length === 0) return <></>;
 
@@ -73,17 +77,34 @@ export default function RecentSearch() {
         }}
       >
         {recentSearch.map((item, index) => (
-          <RecentSearchItem label={item} key={index} />
+          <RecentSearchItem
+            label={item}
+            key={index}
+            setRerender={setRerender}
+          />
         ))}
       </View>
     </View>
   );
 }
 
-function RecentSearchItem({ label }: { label: string }) {
+function RecentSearchItem({
+  label,
+  setRerender,
+}: {
+  label: string;
+  setRerender: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const { navigate } = useNavigation();
   return (
     <View>
       <Button
+        onPress={async () => {
+          await navigateSearchResult(navigate, label);
+
+          // trigger rerender for recentsearch list
+          setRerender((prev) => !prev);
+        }}
         buttonStyle={{
           display: "flex",
           flexDirection: "row",
@@ -98,7 +119,14 @@ function RecentSearchItem({ label }: { label: string }) {
           color: COLOR.IN_ACTIVE,
         }}
       >
-        <History color={COLOR.IN_ACTIVE} size={21} strokeWidth={1.8} />
+        <History
+          color={COLOR.IN_ACTIVE}
+          size={21}
+          strokeWidth={1.8}
+          style={{
+            marginLeft: 4,
+          }}
+        />
         <Text
           numberOfLines={1}
           style={{

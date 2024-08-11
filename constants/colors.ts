@@ -20,4 +20,5 @@ export const COLOR = {
   SHADOW: "#f4f4f4",
   LIGHT_SHADOW: "#f8f8f8",
   GOLD: "#FFD700",
+  SKELETON: "#ECECEC",
 };

@@ -72,7 +72,7 @@ export function InputCustom(props: InputSearchProps) {
           {...props}
           style={[
             {
-              paddingLeft: !props.hideLeftIcon ? 38 : 16,
+              paddingLeft: !props.hideLeftIcon ? 38 : 12,
             },
             props.style,
           ]}
@@ -116,6 +116,7 @@ export function InputCustom(props: InputSearchProps) {
             color={COLOR.IN_ACTIVE}
             onPress={() => {
               setValue(props.minimalInput ? props.minimalInput : "");
+              inputRef.current?.focus();
             }}
           />
         )}

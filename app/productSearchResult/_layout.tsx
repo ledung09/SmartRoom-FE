@@ -8,45 +8,45 @@ import {
   Pressable,
   FlatList,
 } from "react-native";
-import { Image } from "expo-image";
-import { blurhash } from "@/constants/image";
-import image from "@/assets/images/index";
+
 import { COLOR } from "@/constants/colors";
 import Button from "@/components/ui/button";
 import { ArrowLeft, Bell, ChevronLeft, Filter, X } from "lucide-react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import SearchItem from "./components/search-item";
-import Separator from "@/components/ui/separator";
-import PopularKeyword from "./components/search/keyword";
-import RecentSearch from "./components/search/recent";
-import { debounce } from "@/util/debounce";
 import { searchProduct, searchProductAutocomplete } from "@/apis/es";
 import LocalStorage from "@/util/local-storage";
 import ShopItem from "@/components/common/item";
-import CategoryCarousel from "./components/carousel";
-import ProductSearchFilterModal from "./components/modal";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { ProductSearchFilter, ProductShortDetail } from "@/types/product";
+import ProductSearchFilterModal from "./components/modal";
+import CategoryCarousel from "./components/carousel";
+import Skeleton from "@/components/ui/skeleton";
+import ProductListLoading from "@/components/common/itemlist-loading";
 
-export default function ProductSearchResult() {
+export default function ProductSearchResult({ route }) {
+  const { userQuery } = route.params.filter;
+
   const queryClient = useQueryClient();
   const navigation = useNavigation();
+
+  const [query, setQuery] = React.useState(userQuery);
   const [open, setOpen] = React.useState(false);
-  const [query, setQuery] = React.useState("Hellu");
   const [filter, setFilter] = React.useState<ProductSearchFilter>({
     offset: 0,
+    query,
   });
 
-  const { isLoading, data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["productSearchList"],
-    queryFn: (defaultProps) => searchProduct(filter, defaultProps),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, allPage) => {
-      if (lastPage.length === 0) return undefined;
-      return allPage.length + 1;
-    },
-  });
+  const { data, fetchNextPage, hasNextPage, isLoading, isFetching } =
+    useInfiniteQuery({
+      queryKey: ["productSearchList"],
+      queryFn: (defaultProps) => searchProduct(filter, defaultProps),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, allPage) => {
+        if (lastPage.length === 0) return undefined;
+        return allPage.length + 1;
+      },
+    });
 
   const dataArr = data?.pages.map((page) => page).flat();
 
@@ -62,7 +62,7 @@ export default function ProductSearchResult() {
 
   return (
     <>
-      <Button
+      {/* <Button
         title={"reset me"}
         onPress={async () => {
           await queryClient.resetQueries({
@@ -70,9 +70,9 @@ export default function ProductSearchResult() {
             exact: true,
           });
         }}
-      ></Button>
+      ></Button> */}
       {/* <Text>{JSON.stringify(dataArr)}</Text> */}
-      <View style={{ flex: 1, backgroundColor: "blue" }}>
+      <View style={{ flex: 1, backgroundColor: "white" }}>
         <View
           style={{
             display: "flex",
@@ -127,10 +127,9 @@ export default function ProductSearchResult() {
               customBorder
               onFocus={() => {}}
               returnKeyType="previous"
-              onSubmitEditing={async () => {
-                if (query) {
-                  await LocalStorage.addLocalStorage("recentSearch", query);
-                }
+              selection={{
+                start: 0,
+                end: 0,
               }}
             />
 
@@ -144,12 +143,13 @@ export default function ProductSearchResult() {
               }}
               onPress={() => {
                 // @ts-ignore
-                navigation.navigate("productSearch");
+                // navigation.navigate("productSearch");
+                navigation.goBack();
               }}
             />
           </View>
           <Button
-            title={"1"}
+            title={"0"}
             titleStyle={{
               fontSize: 9,
               position: "absolute",
@@ -183,37 +183,25 @@ export default function ProductSearchResult() {
         </View>
 
         <CategoryCarousel />
-        <FlatList
-          onEndReached={onEndReach}
-          onEndReachedThreshold={0.5}
-          keyExtractor={(item) => item._id}
-          renderItem={({ item }) => <ShopItem detail={item} />}
-          data={dataArr}
-          style={{
-            backgroundColor: "yellow",
-            flex: 1,
-          }}
-          numColumns={2}
-          columnWrapperStyle={{ marginHorizontal: 10, paddingVertical: 5 }}
-        >
-          {/* <View
+
+        {isFetching ? (
+          <ProductListLoading />
+        ) : (
+          <FlatList
+            onEndReached={onEndReach}
+            onEndReachedThreshold={0.5}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => <ShopItem detail={item} />}
+            data={dataArr}
             style={{
-              paddingHorizontal: 16,
-              marginVertical: 10,
+              backgroundColor: "white",
+              flex: 1,
+              marginBottom: 8,
             }}
-          >
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                gap: 12,
-              }}
-            >
-              <ShopItem />
-              <ShopItem />
-            </View>
-          </View> */}
-        </FlatList>
+            numColumns={2}
+            columnWrapperStyle={{ marginHorizontal: 10, paddingVertical: 6 }}
+          />
+        )}
       </View>
       <ProductSearchFilterModal control={[open, setOpen]} />
     </>

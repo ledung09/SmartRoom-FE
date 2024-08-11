@@ -19,7 +19,7 @@ import ProductSearch from "./productSearch/_layout";
 import ProductDetail from "./productDetail/_layout";
 import ProductTryout from "./productTryout/_layout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import ProductSearchResult from "./productSearchResult/productSearch/_layout";
+import ProductSearchResult from "./productSearchResult/_layout";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -100,7 +100,7 @@ export default function RootLayout() {
                       header: () => <CustomHeader />,
                     }}
                     // component={ProductSearch}
-                    component={ProductSearchResult}
+                    component={ProductSearch}
                   />
                   <Stack.Screen
                     name="productSearchResult"

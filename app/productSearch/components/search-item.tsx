@@ -5,6 +5,8 @@ import { COLOR } from "@/constants/colors";
 import Button from "@/components/ui/button";
 import Separator from "@/components/ui/separator";
 import LocalStorage from "@/util/local-storage";
+import { useNavigation } from "@react-navigation/native";
+import { navigateSearchResult } from "@/util/navigate";
 
 function splitStringAtFirstOccurrence(str1: string, str2: string): string[] {
   const index = str1.toLowerCase().indexOf(str2.toLowerCase());
@@ -21,6 +23,8 @@ function splitStringAtFirstOccurrence(str1: string, str2: string): string[] {
 }
 
 export default function SearchItem({ value }: { value: [string, string] }) {
+  const { navigate } = useNavigation();
+
   const [label, query] = value;
   const stringParse: string[] = splitStringAtFirstOccurrence(label, query);
 
@@ -28,7 +32,7 @@ export default function SearchItem({ value }: { value: [string, string] }) {
     <View>
       <Button
         onPress={async () => {
-          await LocalStorage.addLocalStorage("recentSearch", label);
+          await navigateSearchResult(navigate, label);
         }}
         buttonStyle={{
           paddingHorizontal: 18,

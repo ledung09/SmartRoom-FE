@@ -3,13 +3,14 @@ import React from "react";
 import { Image } from "expo-image";
 import { blurhash } from "@/constants/image";
 
-import { Camera } from "lucide-react-native";
+import { Camera, WandSparkles } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useCameraPermissions } from "expo-camera";
 import Dialogs from "@/components/ui/dialog";
 import Button from "@/components/ui/button";
 import ImageTryoutModal from "./tryout-modal";
 import { useProductDetail } from "../../hooks/useProductDetail";
+import Skeleton from "@/components/ui/skeleton";
 
 const windowWidth = Dimensions.get("window").width;
 const imageHeight = 320;
@@ -19,47 +20,34 @@ export default function ImageCarousel() {
   const { data, error, isPending } = useProductDetail();
 
   const [open, setOpen] = React.useState(false); // modal control
-  // const [isDialogOn, setIsDialogOn] = React.useState(true);
 
-  if (isPending) return <Text>There is loading</Text>;
   if (error) return <Text>There is err</Text>;
 
   return (
     <>
-      {/* <Dialogs
-        control={[isDialogOn, setIsDialogOn]}
-        title="Camera Permission"
-        confirm={() => {
-          requestPermission();
-        }}
-        activeButtonText={["Deny", "Allow"]}
-      >
+      {isPending ? (
+        <Skeleton
+          style={{
+            height: imageHeight,
+            width: "100%",
+          }}
+        />
+      ) : (
         <View>
-          <Text>
-            Allow{" "}
-            <Text
-              style={{
-                fontWeight: "700",
-              }}
-            >
-              Smart Room
-            </Text>{" "}
-            would like to access the camera
-          </Text>
+          <ScrollView
+            horizontal={true}
+            pagingEnabled={true}
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={(event) =>
+              console.log(event.nativeEvent.contentOffset.x)
+            }
+          >
+            {data!.image.map((item, index) => (
+              <ImageCarouselItem setOpen={setOpen} image={item} key={index} />
+            ))}
+          </ScrollView>
         </View>
-      </Dialogs> */}
-      <ScrollView
-        horizontal={true}
-        pagingEnabled={true}
-        showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={(event) =>
-          console.log(event.nativeEvent.contentOffset.x)
-        }
-      >
-        {data?.image.map((item, index) => (
-          <ImageCarouselItem setOpen={setOpen} image={item} key={index} />
-        ))}
-      </ScrollView>
+      )}
       <ImageTryoutModal control={[open, setOpen]} />
     </>
   );
@@ -89,8 +77,6 @@ function ImageCarouselItem({
         style={{
           height: imageHeight,
           width: windowWidth,
-          borderTopRightRadius: 6,
-          borderTopLeftRadius: 6,
         }}
       />
       {backdrop && (
@@ -139,7 +125,7 @@ function ImageCarouselItem({
               marginLeft: 10,
               fontSize: 14.5,
             }}
-            icon={<Camera color={"white"} size={24} />}
+            icon={<WandSparkles color={"white"} size={22} />}
             title="Try it out"
           />
         </>

@@ -6,6 +6,8 @@ import { Heart } from "lucide-react-native";
 import { useProductDetail } from "../../hooks/useProductDetail";
 import { debounce } from "@/util/debounce";
 import { setProductHeartedDetail } from "@/apis/product";
+import PriceUtil from "@/util/price-util";
+import Skeleton from "@/components/ui/skeleton";
 
 export default function HeaderProductDetail() {
   const { data, error, isPending, id } = useProductDetail();
@@ -23,10 +25,36 @@ export default function HeaderProductDetail() {
     }
   }, [data]);
 
-  if (isPending) return <Text>There is loading</Text>;
   if (error) return <Text>There is err</Text>;
 
-  return (
+  return isPending ? (
+    <View
+      style={{
+        flexDirection: "column",
+        paddingVertical: 18,
+        paddingHorizontal: 16,
+
+        gap: 12,
+      }}
+    >
+      <Skeleton
+        height={22}
+        style={{
+          width: "100%",
+        }}
+      />
+      <View
+        style={{
+          flexDirection: "row",
+          gap: 10,
+          alignItems: "flex-end",
+        }}
+      >
+        <Skeleton height={34} width={120} />
+        <Skeleton height={26} width={80} />
+      </View>
+    </View>
+  ) : (
     <View
       style={{
         display: "flex",
@@ -50,7 +78,7 @@ export default function HeaderProductDetail() {
             marginBottom: 6,
           }}
         >
-          {data?.name}
+          {data!.name}
         </Text>
 
         <View
@@ -70,7 +98,7 @@ export default function HeaderProductDetail() {
               letterSpacing: 0.5,
             }}
           >
-            {data?.price}
+            {PriceUtil.priceCommaSeperation(data!.price)}
             <Text
               style={{
                 fontSize: 20,
@@ -95,7 +123,8 @@ export default function HeaderProductDetail() {
                 fontWeight: "600",
               }}
             >
-              {data?.sold} solds
+              {PriceUtil.soldNumberReduce(data!.sold)} sold
+              {data!.sold > 1 && "s"}
             </Text>
           </View>
         </View>

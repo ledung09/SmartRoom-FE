@@ -16,9 +16,11 @@ import { debounce } from "@/util/debounce";
 import { searchProductAutocomplete } from "@/apis/es";
 import LocalStorage from "@/util/local-storage";
 import { useQuery } from "@tanstack/react-query";
+import { navigateSearchResult } from "@/util/navigate";
 
-export default function ProductSearch() {
+export default function ProductSearch({ route }) {
   const [query, setQuery] = React.useState("");
+
   const [debounceQuery, setDebounceQuery] = React.useState("");
   const navigation = useNavigation();
 
@@ -37,6 +39,12 @@ export default function ProductSearch() {
       debouncedFetchResults(query);
     }
   }, [query]);
+
+  React.useEffect(() => {
+    if (route.params) {
+      setQuery(route.params.query);
+    }
+  }, [route]);
 
   return (
     <View style={{ flex: 1, backgroundColor: "red" }}>
@@ -93,8 +101,8 @@ export default function ProductSearch() {
             onFocus={() => {}}
             returnKeyType="previous"
             onSubmitEditing={async () => {
-              if (query) {
-                await LocalStorage.addLocalStorage("recentSearch", query);
+              if (query.trim()) {
+                await navigateSearchResult(navigation.navigate, query);
               }
             }}
           />

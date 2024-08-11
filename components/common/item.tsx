@@ -8,6 +8,7 @@ import Button from "../ui/button";
 import { useNavigation } from "@react-navigation/native";
 import { Heart } from "lucide-react-native";
 import { ProductShortDetail } from "@/types/product";
+import PriceUtil from "@/util/price-util";
 
 export default function ShopItem({ detail }: { detail: ProductShortDetail }) {
   const { navigate } = useNavigation();
@@ -16,16 +17,16 @@ export default function ShopItem({ detail }: { detail: ProductShortDetail }) {
   return (
     <Pressable
       style={{
-        flex: 1,
-        borderRadius: 8,
+        flex: 0.5,
+        borderRadius: 6,
         backgroundColor: "white",
-        marginHorizontal: 4,
+        marginHorizontal: 5,
       }}
     >
       <Shadow
         style={[
           {
-            borderRadius: 8,
+            borderRadius: 6,
             display: "flex",
             flexDirection: "row",
             paddingHorizontal: 0,
@@ -51,13 +52,13 @@ export default function ShopItem({ detail }: { detail: ProductShortDetail }) {
           }}
           buttonStyle={{
             flex: 1,
-            borderRadius: 8,
+            borderRadius: 6,
             backgroundColor: "white",
             paddingVertical: 0,
             paddingHorizontal: 0,
           }}
           containerStyle={{
-            borderRadius: 8,
+            borderRadius: 6,
             position: "relative",
           }}
           onPress={() => {
@@ -84,8 +85,8 @@ export default function ShopItem({ detail }: { detail: ProductShortDetail }) {
                 style={{
                   height: 160,
                   width: "100%",
-                  borderTopRightRadius: 8,
-                  borderTopLeftRadius: 8,
+                  borderTopRightRadius: 6,
+                  borderTopLeftRadius: 6,
                 }}
               />
               <View
@@ -121,7 +122,7 @@ export default function ShopItem({ detail }: { detail: ProductShortDetail }) {
                       color: COLOR.PRIMARY,
                     }}
                   >
-                    {detail.price}
+                    {PriceUtil.priceCommaSeperation(detail.price)}
                     <Text
                       style={{
                         fontSize: 13,
@@ -140,7 +141,8 @@ export default function ShopItem({ detail }: { detail: ProductShortDetail }) {
                       letterSpacing: -0.2,
                     }}
                   >
-                    | {detail.price} sold{detail.sold > 1 || "s"}
+                    | {PriceUtil.soldNumberReduce(detail.sold)} sold
+                    {detail.sold > 1 && "s"}
                   </Text>
                 </View>
               </View>
@@ -173,7 +175,7 @@ export default function ShopItem({ detail }: { detail: ProductShortDetail }) {
               }}
               icon={
                 <Heart
-                  fill={heart ? "white" : COLOR.PRIMARY}
+                  fill={!heart ? "transparent" : COLOR.PRIMARY}
                   color={COLOR.PRIMARY}
                   size={18}
                   strokeWidth={2.5}

@@ -27,16 +27,16 @@ export async function searchProduct(
   // console.log("props", props);
   // if (!query) return [];
 
-  const url = `https://smartroom-5guys.vercel.app/search?offset=${
-    (defaultProps.pageParam - 1) * 1
-  }`;
+  let url = `https://smartroom-5guys.vercel.app/search?offset=${
+    (defaultProps.pageParam - 1) * DEFAULT_PAGINATION.LIMIT
+  }&limit=${DEFAULT_PAGINATION.LIMIT}`;
 
-  console.log(url);
-
-  // if (query) url.concat(`&query=${query}`);
+  if (filter.query) url = url.concat(`&query=${filter.query}`);
   // if (priceSort) url.concat(`&priceSort=${priceSort}`);
   // if (soldSort) url.concat(`&soldSort=${soldSort}`);
   // if (categoryId) url.concat(`&categoryId=${categoryId}`);
+
+  console.log(url);
 
   return axios
     .get(url)
